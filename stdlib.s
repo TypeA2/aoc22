@@ -195,3 +195,29 @@ readq_loop_cmp:
     # return end pointer in %rdx
     movq %rdi, %rdx
     ret
+
+    .global linesize
+linesize:
+    movq %rdi, %rax
+    jmp linesize_cmp
+linesize_l0:
+    incq %rax
+linesize_cmp:
+    cmpb $10, (%rax)
+    jne linesize_l0
+    subq %rdi, %rax
+    ret
+
+    .global memset
+memset:
+    # %rdi, %sil, %rdx
+    # dest, ch, count
+    xorq %rax, %rax
+    jmp memset_cmp
+memset_l0:
+    movb %sil, (%rdi, %rax, 1)
+    incq %rax
+memset_cmp:
+    cmpq %rdx, %rax
+    jl memset_l0
+    ret

@@ -73,7 +73,7 @@ file_not_empty:
     call close
 
     # %rax is current position
-    # %rbx is file size
+    # %rbx is file eof
     # %rsi is current score
     movq -24(%rbp), %rax
     movq %rax, %rbx
