@@ -221,3 +221,16 @@ memset_cmp:
     cmpq %rdx, %rax
     jl memset_l0
     ret
+
+    .global in_range
+in_range:
+    # Return true if %rdi >= %rsi && %rdi <= %rdx
+    cmpq %rsi, %rdi # %rdi >= %rsi
+    jl in_range_false
+    cmpq %rdx, %rdi # %rdi <= %rdx
+    jg in_range_false
+    movq $1, %rax
+    ret
+in_range_false:
+    xorq %rax, %rax
+    ret
