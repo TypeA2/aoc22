@@ -158,6 +158,7 @@ brk:
     .global alloc
 alloc:
     # allocate %rdi bytes, return start of allocated area
+    pushq %rbx
     movq %rdi, %rbx # Save request size
 
     # Retrieve current program break
@@ -168,6 +169,7 @@ alloc:
     movq %rbx, %rdi
     call brk
     movq %rbx, %rax
+    popq %rbx
     retq
 
     .global readq
@@ -194,7 +196,7 @@ readq_loop_cmp:
 
     # return end pointer in %rdx
     movq %rdi, %rdx
-    ret
+    retq
 
     .global linesize
 linesize:
@@ -206,7 +208,30 @@ linesize_cmp:
     cmpb $10, (%rax)
     jne linesize_l0
     subq %rdi, %rax
-    ret
+    retq
+
+    .global skip_whitespace
+skip_whitespace:
+    movq %rdi, %rax
+    jmp skip_whitespace_cmp
+skip_whitespace_start:
+    incq %rax
+skip_whitespace_cmp:
+    cmpb $32, (%rax)
+    je skip_whitespace_start
+    retq
+
+    .global skip_line
+skip_line:
+    movq %rdi, %rax
+    jmp skip_line_cmp
+skip_line_start:
+    incq %rax
+skip_line_cmp:
+    cmpb $10, (%rax)
+    jne skip_line_start
+    leaq 1(%rax), %rax
+    retq
 
     .global memset
 memset:
@@ -220,17 +245,4 @@ memset_l0:
 memset_cmp:
     cmpq %rdx, %rax
     jl memset_l0
-    ret
-
-    .global in_range
-in_range:
-    # Return true if %rdi >= %rsi && %rdi <= %rdx
-    cmpq %rsi, %rdi # %rdi >= %rsi
-    jl in_range_false
-    cmpq %rdx, %rdi # %rdi <= %rdx
-    jg in_range_false
-    movq $1, %rax
-    ret
-in_range_false:
-    xorq %rax, %rax
-    ret
+    retq
