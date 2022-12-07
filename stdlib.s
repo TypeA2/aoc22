@@ -246,3 +246,17 @@ memset_cmp:
     cmpq %rdx, %rax
     jl memset_l0
     retq
+
+    .global memmove
+    # %rdi, %rsi, %rdx
+    # dest, src, cnt
+memmove:
+    jmp memmove_cmp
+memmove_start:
+    movb -1(%rsi, %rdx), %cl
+    movb %cl, -1(%rdi, %rdx)
+    decq %rdx
+memmove_cmp:
+    cmpq $0, %rdx
+    jg memmove_start
+    ret
