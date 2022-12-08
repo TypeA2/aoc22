@@ -33,7 +33,7 @@ printq:
     pushq %rdx
 
     movq %rax, %rdi
-    call printq
+    callq printq
 
     popq %rdx
 printq_l0:
@@ -41,7 +41,7 @@ printq_l0:
     # Convert to ascii
     addq $48, %rdx
     movq %rdx, %rdi
-    call putc
+    callq putc
     retq
 
     .global putc
@@ -51,10 +51,10 @@ putc:
     subq $16, %rsp
 
     movb %dil, (%rsp)
-    # Call prints for 1 byte
+    # callq prints for 1 byte
     movq %rsp, %rdi
     movq $1, %rsi
-    call prints
+    callq prints
 
     leaveq
     retq
@@ -64,15 +64,15 @@ puts:
     # rdi = null-termianted pointer
     # Store string value
     movq %rdi, %rcx
-    call strlen
+    callq strlen
     movq %rax, %rsi
 
     movq %rcx, %rdi
-    call prints
+    callq prints
 
     # ASCII newline
     movb $10, %dil
-    call putc
+    callq putc
     retq
     
     .global exit
@@ -158,18 +158,19 @@ brk:
     .global alloc
 alloc:
     # allocate %rdi bytes, return start of allocated area
-    pushq %rbx
-    movq %rdi, %rbx # Save request size
+    movq %rdi, %rdx # Save request size
 
     # Retrieve current program break
-    call get_brk
+    callq get_brk
+
+    pushq %rax
 
     # Calculate new brk
-    addq %rax, %rbx
-    movq %rbx, %rdi
-    call brk
-    movq %rbx, %rax
-    popq %rbx
+    addq %rax, %rdx
+    movq %rdx, %rdi
+    callq brk
+    
+    popq %rax
     retq
 
     .global readq
@@ -259,4 +260,33 @@ memmove_start:
 memmove_cmp:
     cmpq $0, %rdx
     jg memmove_start
-    ret
+    retq
+
+    .global memcmp
+memcmp:
+    # %rdi, %rsi, %rdx
+    # a, b, count
+    xorq %rax, %rax
+    xorq %rcx, %rcx
+    jmp memcmp_cmp
+memcmp_start:
+    # Add lhs to acc
+    movzbq (%rdi), %r8
+    addq %r8, %rax
+
+    # Subtract rhs from acc
+    movzbq (%rsi), %r8
+    subq %r8, %rax
+
+    # If nonzero, characters differ, so skip to end
+    cmpq $0, %rax
+    jne memcmp_end
+
+    incq %rdi
+    incq %rsi
+    incq %rcx
+memcmp_cmp:
+    cmpq %rdx, %rcx
+    jl memcmp_start
+memcmp_end:
+    retq
