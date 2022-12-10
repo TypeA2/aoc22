@@ -1,3 +1,9 @@
 day*/day*
 !day*/day*.s
+!day*/day*.rs
 *.txt
+
+
+# Added by cargo
+
+/target
