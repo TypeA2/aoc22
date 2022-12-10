@@ -1,0 +1,11 @@
+[package]
+name = "aoc22"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "day9a"
+path = "day9/day9a.rs"
+
+[dependencies]
+memmap = "0.7.0"
