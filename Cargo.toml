@@ -7,5 +7,9 @@ edition = "2021"
 name = "day9a"
 path = "day9/day9a.rs"
 
+[[bin]]
+name = "day9b"
+path = "day9/day9b.rs"
+
 [dependencies]
 memmap = "0.7.0"
