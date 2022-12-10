@@ -3,7 +3,7 @@ use std::{env, io};
 use std::fs::File;
 use std::error::Error;
 use std::collections::HashSet;
-use std::ops::{self, Deref};
+use std::ops::{self};
 use std::fmt;
 use std::hash::Hash;
 
