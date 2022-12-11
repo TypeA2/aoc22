@@ -54,20 +54,23 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 
-    let measurements = vec![20, 60, 100, 140, 180, 220];
-
-    let mut cycles: i64 = 0;
-    let mut reg: i64 = 1;
-
-    let mut total = 0;
+    let mut cycles = 0;
+    let mut reg = 1;
 
     for instr in instructions {
         for i in 0..instr.cycles() {
+            let pos = cycles % 40;
+
             cycles += 1;
 
-            if measurements.contains(&cycles) {
-                total += cycles * reg;
-                println!("{}: {}", cycles, cycles * reg);
+            if (pos == (reg - 1))|| (pos == reg) || (pos == (reg + 1)) {
+                print!("#");
+            } else {
+                print!(".");
+            }
+
+            if pos == 39 {
+                print!("\n");
             }
 
             if !instr.nop {
@@ -79,8 +82,6 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         }
     }
-
-    println!("total: {}", total);
 
     Ok(())
 }
