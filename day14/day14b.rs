@@ -300,7 +300,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut i = 1;
     loop {
-        // println!("{grid}");
+        //println!("{grid}");
 
         if grid.drop() {
             break;
