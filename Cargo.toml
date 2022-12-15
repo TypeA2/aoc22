@@ -51,5 +51,13 @@ path = "day14/day14a.rs"
 name = "day14b"
 path = "day14/day14b.rs"
 
+[[bin]]
+name = "day15a"
+path = "day15/day15a.rs"
+
+[[bin]]
+name = "day15b"
+path = "day15/day15b.rs"
+
 [dependencies]
 memmap = "0.7.0"
